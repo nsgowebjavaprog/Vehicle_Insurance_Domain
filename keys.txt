@@ -1,0 +1,6 @@
+User_Name : loninagaraj258_db_user
+
+Password : pjYRkPAOPzsPPbzp
+
+mongodb+srv://loninagaraj258_db_user:<db_password>@cluster0.xqgzqkw.mongodb.net/?appName=Cluster0
+
