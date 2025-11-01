@@ -4,114 +4,376 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vehicle Insurance Prediction</title>
-    <!-- Corrected the CSS path -->
-    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.8s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        animation: glow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes glow {
+        from {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        to {
+          text-shadow: 2px 2px 20px rgba(102, 126, 234, 0.5);
+        }
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      label {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 0.95em;
+        transition: color 0.3s ease;
+      }
+
+      input {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        transform: translateY(-2px);
+      }
+
+      input:hover {
+        border-color: #764ba2;
+      }
+
+      button {
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      button::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      button:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+
+      button:active {
+        transform: translateY(-1px);
+      }
+
+      .train-button {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        margin-top: 10px;
+      }
+
+      .train-button:hover {
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+      }
+
+      .result {
+        margin-top: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        border-radius: 15px;
+        text-align: center;
+        animation: resultPop 0.5s ease-out;
+      }
+
+      @keyframes resultPop {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .result h2 {
+        color: #333;
+        font-size: 1.5em;
+      }
+
+      .input-group {
+        animation: fadeInUp 0.6s ease-out backwards;
+      }
+
+      .input-group:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .input-group:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .input-group:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .input-group:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      .input-group:nth-child(5) {
+        animation-delay: 0.3s;
+      }
+      .input-group:nth-child(6) {
+        animation-delay: 0.35s;
+      }
+      .input-group:nth-child(7) {
+        animation-delay: 0.4s;
+      }
+      .input-group:nth-child(8) {
+        animation-delay: 0.45s;
+      }
+      .input-group:nth-child(9) {
+        animation-delay: 0.5s;
+      }
+      .input-group:nth-child(10) {
+        animation-delay: 0.55s;
+      }
+      .input-group:nth-child(11) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 20px;
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="canvas-container"></div>
+
     <div class="container">
       <h1>Vehicle Insurance Prediction</h1>
 
       <form method="post" action="/">
-        <label for="Gender">Gender (1: Male, 0: Female):</label>
-        <input
-          type="number"
-          id="Gender"
-          name="Gender"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Gender">Gender (1: Male, 0: Female):</label>
+          <input
+            type="number"
+            id="Gender"
+            name="Gender"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <label for="Age">Age:</label>
-        <input type="number" id="Age" name="Age" required />
+        <div class="input-group">
+          <label for="Age">Age:</label>
+          <input type="number" id="Age" name="Age" required />
+        </div>
 
-        <label for="Driving_License">Driving License (0: No, 1: Yes):</label>
-        <input
-          type="number"
-          id="Driving_License"
-          name="Driving_License"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Driving_License">Driving License (0: No, 1: Yes):</label>
+          <input
+            type="number"
+            id="Driving_License"
+            name="Driving_License"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <label for="Region_Code">Region Code:</label>
-        <input
-          type="number"
-          step="0.01"
-          id="Region_Code"
-          name="Region_Code"
-          required
-        />
+        <div class="input-group">
+          <label for="Region_Code">Region Code:</label>
+          <input
+            type="number"
+            step="0.01"
+            id="Region_Code"
+            name="Region_Code"
+            required
+          />
+        </div>
 
-        <label for="Previously_Insured"
-          >Previously Insured (0: No, 1: Yes):</label
-        >
-        <input
-          type="number"
-          id="Previously_Insured"
-          name="Previously_Insured"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Previously_Insured"
+            >Previously Insured (0: No, 1: Yes):</label
+          >
+          <input
+            type="number"
+            id="Previously_Insured"
+            name="Previously_Insured"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <label for="Annual_Premium">Annual Premium:</label>
-        <input
-          type="number"
-          step="0.01"
-          id="Annual_Premium"
-          name="Annual_Premium"
-          required
-        />
+        <div class="input-group">
+          <label for="Annual_Premium">Annual Premium:</label>
+          <input
+            type="number"
+            step="0.01"
+            id="Annual_Premium"
+            name="Annual_Premium"
+            required
+          />
+        </div>
 
-        <label for="Policy_Sales_Channel">Policy Sales Channel:</label>
-        <input
-          type="number"
-          step="0.01"
-          id="Policy_Sales_Channel"
-          name="Policy_Sales_Channel"
-          required
-        />
+        <div class="input-group">
+          <label for="Policy_Sales_Channel">Policy Sales Channel:</label>
+          <input
+            type="number"
+            step="0.01"
+            id="Policy_Sales_Channel"
+            name="Policy_Sales_Channel"
+            required
+          />
+        </div>
 
-        <label for="Vintage">Vintage:</label>
-        <input type="number" id="Vintage" name="Vintage" required />
+        <div class="input-group">
+          <label for="Vintage">Vintage:</label>
+          <input type="number" id="Vintage" name="Vintage" required />
+        </div>
 
-        <label for="Vehicle_Age_lt_1_Year"
-          >Vehicle Age < 1 Year (0: No, 1: Yes):</label
-        >
-        <input
-          type="number"
-          id="Vehicle_Age_lt_1_Year"
-          name="Vehicle_Age_lt_1_Year"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Vehicle_Age_lt_1_Year"
+            >Vehicle Age < 1 Year (0: No, 1: Yes):</label
+          >
+          <input
+            type="number"
+            id="Vehicle_Age_lt_1_Year"
+            name="Vehicle_Age_lt_1_Year"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <label for="Vehicle_Age_gt_2_Years"
-          >Vehicle Age > 2 Years (0: No, 1: Yes):</label
-        >
-        <input
-          type="number"
-          id="Vehicle_Age_gt_2_Years"
-          name="Vehicle_Age_gt_2_Years"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Vehicle_Age_gt_2_Years"
+            >Vehicle Age > 2 Years (0: No, 1: Yes):</label
+          >
+          <input
+            type="number"
+            id="Vehicle_Age_gt_2_Years"
+            name="Vehicle_Age_gt_2_Years"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <label for="Vehicle_Damage_Yes">Vehicle Damage (0: No, 1: Yes):</label>
-        <input
-          type="number"
-          id="Vehicle_Damage_Yes"
-          name="Vehicle_Damage_Yes"
-          min="0"
-          max="1"
-          required
-        />
+        <div class="input-group">
+          <label for="Vehicle_Damage_Yes"
+            >Vehicle Damage (0: No, 1: Yes):</label
+          >
+          <input
+            type="number"
+            id="Vehicle_Damage_Yes"
+            name="Vehicle_Damage_Yes"
+            min="0"
+            max="1"
+            required
+          />
+        </div>
 
-        <button type="submit">Predict</button>
+        <button type="submit">Predict Insurance</button>
       </form>
 
       <form method="get" action="/train">
@@ -122,7 +384,146 @@
       <div class="result">
         <h2>Result: {{ context }}</h2>
       </div>
-      {% endif %}
+      {% endif %} 
+      <div
+        <h3 style="text-align: center; margin-top: 20px; color: #b007e4ff; font-weight: 700">
+          Developed by NS Ai SCHOOL
+        </h3>
+      </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      // Three.js Scene Setup
+      const container = document.getElementById("canvas-container");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+      });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      camera.position.z = 5;
+
+      // Create floating particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 1000;
+      const posArray = new Float32Array(particlesCount * 3);
+
+      for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+      }
+
+      particlesGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(posArray, 3)
+      );
+
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.02,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.8,
+      });
+
+      const particlesMesh = new THREE.Points(
+        particlesGeometry,
+        particlesMaterial
+      );
+      scene.add(particlesMesh);
+
+      // Create rotating torus
+      const torusGeometry = new THREE.TorusGeometry(2, 0.3, 16, 100);
+      const torusMaterial = new THREE.MeshBasicMaterial({
+        color: 0x667eea,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+      scene.add(torus);
+
+      // Create wireframe sphere
+      const sphereGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+      const sphereMaterial = new THREE.MeshBasicMaterial({
+        color: 0x764ba2,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.2,
+      });
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.x = -3;
+      scene.add(sphere);
+
+      // Mouse movement effect
+      let mouseX = 0;
+      let mouseY = 0;
+
+      document.addEventListener("mousemove", (e) => {
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      });
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Rotate objects
+        torus.rotation.x += 0.01;
+        torus.rotation.y += 0.005;
+
+        sphere.rotation.x += 0.008;
+        sphere.rotation.y += 0.01;
+
+        // Animate particles
+        particlesMesh.rotation.y += 0.001;
+
+        // Mouse interaction
+        camera.position.x = mouseX * 0.5;
+        camera.position.y = mouseY * 0.5;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      // Handle window resize
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Add pulse animation to inputs on focus
+      const inputs = document.querySelectorAll("input");
+      inputs.forEach((input) => {
+        input.addEventListener("focus", function () {
+          this.style.animation = "pulse 0.5s ease-in-out";
+        });
+
+        input.addEventListener("blur", function () {
+          this.style.animation = "";
+        });
+      });
+
+      // Add animation keyframe for pulse
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
   </body>
 </html>
